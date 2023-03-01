@@ -13,7 +13,7 @@ const Container = ({
       {isNavbar && <Navbar />}
       {Component && <Component />}
       {children}
-      {isFooter && <Footer />}
+      {/* {isFooter && <Footer />} */}
     </>
   );
 };
