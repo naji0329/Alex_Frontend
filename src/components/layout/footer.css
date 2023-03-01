@@ -1,0 +1,13 @@
+.footer {
+  /* @apply w-full;
+  background-image: url("../../images/footer_bg.png");
+  background-size: 100% 100%; */
+}
+
+.footer_title {
+  @apply pb-3 text-xl text-[#101115] dark:text-white font-bold;
+}
+
+.footer_text {
+  @apply text-sm sm:text-base;
+}
