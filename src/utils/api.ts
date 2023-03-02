@@ -4,8 +4,10 @@ import { LOGOUT } from "../actions/types";
 
 // Create an instance of axios
 const api = axios.create({
-  baseURL: "http://localhost:5005/api/",
-  // withCredentials: true,
+  baseURL: "/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 /*
   NOTE: intercept any error responses from the api
