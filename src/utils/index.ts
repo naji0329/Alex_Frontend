@@ -122,21 +122,38 @@ function getMaxMinValue(_arr: any) {
   };
 }
 
-function getMaxMinQuote(_arr: any) {
+function getMaxMinQuote(_arr: any, key: string) {
   let max = 0;
-  let min = 9999999999999999999999999999999;
-  _arr.map((row: any, key: any) => {
-    if (max < row.volume_24h) {
-      max = row.volume_24h;
+  let min = 99999999;
+
+  for (let i = 0; i < _arr.length; i++) {
+    const row = _arr[i];
+    if (parseFloat(row[key])) {
+      console.log(i, max, min, parseFloat(row[key]));
+      if (max < parseFloat(row[key])) {
+        console.log(i, "max");
+        max = parseFloat(row[key]);
+      }
+      if (min > parseFloat(row[key])) {
+        console.log(i, "min");
+        min = parseFloat(row[key]);
+      }
     }
-    if (min > row.volume_24h) {
-      min = row.volume_24h;
-    }
-  });
+  }
+
   return {
     max: max,
     min: min,
   };
+}
+
+function getUniquelistFromArrayByKey(arr: any, key: string) {
+  const unique = arr
+    .map((item: any) => item[key])
+    .filter(
+      (value: any, index: any, self: any) => self.indexOf(value) === index
+    );
+  return unique;
 }
 
 export {
@@ -151,4 +168,5 @@ export {
   getMaxMinValue,
   dateToTimeStamp,
   getMaxMinQuote,
+  getUniquelistFromArrayByKey,
 };

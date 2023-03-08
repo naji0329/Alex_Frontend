@@ -5,3 +5,27 @@
 .n-container {
   @apply max-w-[1400px] w-11/12 m-auto;
 }
+
+.ag-header-group-cell-label {
+  justify-content: center;
+}
+/* .ag-header-cell-label {
+  justify-content: center;
+}
+.ag-cell {
+  justify-content: center;
+}
+.ag-cell-value {
+  justify-content: center;
+} */
+.ag-theme-alpine {
+  /* --ag-foreground-color: rgb(126, 46, 132);
+  --ag-background-color: rgb(249, 245, 227);
+  --ag-header-foreground-color: rgb(204, 245, 172);
+  --ag-header-background-color: rgb(209, 64, 129);
+  --ag-odd-row-background-color: rgb(0, 0, 0, 0.03);
+  --ag-header-column-resize-handle-color: rgb(126, 46, 132); */
+
+  --ag-font-size: 11px;
+  --ag-font-family: monospace;
+}
