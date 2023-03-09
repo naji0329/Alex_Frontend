@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import useProduct from '../../../hook/useProduct';
 import { useEffectOnce } from '../../../hook/useEffectOnce';
 import { AgGridReact } from 'ag-grid-react';
@@ -24,9 +24,9 @@ function ProductsTable() {
         const res = await getProducts();
         setRowData(res);
         setProductsData(res)
-        setTimeout(() => {
-            autoSizeAll(false)
-        }, 100)
+        // setTimeout(() => {
+        //     autoSizeAll(false)
+        // }, 100)
     };
 
     useEffectOnce(() => {
@@ -65,8 +65,24 @@ function ProductsTable() {
                 { headerName: 'Class', field: 'class' },
                 { headerName: 'Year released', field: 'releasedYear', width: 135 },
                 { headerName: 'Discount Code', field: 'discountCode' },
-                { headerName: 'Product Link', field: 'productLink' },
-                { headerName: 'Youtube Review', field: 'youtubeReview' },
+                {
+                    headerName: 'Product Link', field: 'productLink', cellRenderer: (params: any) => {
+                        if (params.value) {
+                            return (
+                                <a href={`${params.value}`} target={"_blank"} rel="noreferrer" className='text-blue-400'>HERE</a>
+                            );
+                        }
+                    }
+                },
+                {
+                    headerName: 'Youtube Review', field: 'youtubeReview', cellRenderer: (params: any) => {
+                        if (params.value) {
+                            return (
+                                <a href={`${params.value}`} target={"_blank"} rel="noreferrer" className='text-blue-400'>HERE</a>
+                            );
+                        }
+                    }
+                },
             ],
         },
         {
@@ -123,7 +139,7 @@ function ProductsTable() {
                 { headerName: "850", field: 'wavelengths850', width: 90 },
                 { headerName: "930", field: 'wavelengths930', width: 90 },
                 { headerName: "950", field: 'wavelengths950', width: 90 },
-                { headerName: `Peak Wavelengths Tested <br/>(rounded to nearest 5nm)`, field: 'testedPeakWavelengths' },
+                { headerName: `Peak Wavelengths Tested < br /> (rounded to nearest 5nm)`, field: 'testedPeakWavelengths' },
             ],
         },
         {
@@ -145,12 +161,12 @@ function ProductsTable() {
         {
             headerName: 'nnEMF',
             children: [
-                { headerName: "EMF - Electric  3 inch", field: 'EMFElectric3' },
-                { headerName: "EMF - Electric  6 inch", field: 'EMFElectric6' },
+                { headerName: "EMF - Electric 3 inch", field: 'EMFElectric3' },
+                { headerName: "EMF - Electric 6 inch", field: 'EMFElectric6' },
                 { headerName: "Magnetic - 3 inch (uT)", field: 'magnetic3' },
                 { headerName: "Magnetic - 6 inch (uT)", field: 'magnetic6' },
-                { headerName: "Micowave -  3inch", field: 'micowave3' },
-                { headerName: "Micowave -  6inch", field: 'micowave6' },
+                { headerName: "Micowave - 3inch", field: 'micowave3' },
+                { headerName: "Micowave - 6inch", field: 'micowave6' },
             ],
         },
         {
@@ -166,17 +182,18 @@ function ProductsTable() {
 
     return (
         <>
-            {/* Search */}
-            <Search rowData={rowData} productsData={productsData} setRowData={setRowData} />
-            <div style={gridStyle} className="ag-theme-alpine mt-5">
-                <AgGridReact<any>
-                    ref={gridRef}
-                    rowData={rowData}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                    onGridReady={onGridReady}
-                    onColumnResized={onColumnResized}
-                ></AgGridReact>
+            <div className='flex justify-between items-start gap-10'>
+                <div style={gridStyle} className="ag-theme-alpine mt-5">
+                    <AgGridReact<any>
+                        ref={gridRef}
+                        rowData={rowData}
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                        onGridReady={onGridReady}
+                        onColumnResized={onColumnResized}
+                    ></AgGridReact>
+                </div>
+                <Search rowData={rowData} productsData={productsData} setRowData={setRowData} />
             </div>
         </>
 

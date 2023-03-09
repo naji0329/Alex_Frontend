@@ -1,20 +1,28 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { getMaxMinQuote, getUniquelistFromArrayByKey } from '../../../utils';
-import Slider from '@mui/material/Slider';
-import { Stack } from '@mui/material';
+import RangeSelector from './search/RangeSelector';
+import SelectOneFilter from './search/SelectOneFilter';
 
 
 function Search({ setRowData, productsData }: any) {
-
     const [search, setSearch] = useState("");
     const [company, setCompany] = useState<any>();
     const [className, setClassName] = useState<any>();
+    const [warranty, setWarranty] = useState<any>();
+
     const [discountedPrice, setDiscountedPrice] = React.useState<number[]>([0, 100]);
     const [discountedPriceRange, setDiscountedPriceRange] = React.useState<number[]>([0, 0]);
 
-    function valuetext(value: number) {
-        return `${value}°C`;
-    }
+    const [weight, setWeight] = React.useState<number[]>([0, 100]);
+    const [weightRange, setWeightRange] = React.useState<number[]>([0, 0]);
+
+    const [height, setHeight] = React.useState<number[]>([0, 100]);
+    const [heightRange, setHeightRange] = React.useState<number[]>([0, 0]);
+
+    const [leds, setLeds] = React.useState<number[]>([0, 100]);
+    const [ledsRange, setLedsRange] = React.useState<number[]>([0, 0]);
+
+    const [totalPowerOutput, setTotalPowerOutput] = React.useState<number[]>([0, 100]);
+    const [totalPowerOutputRange, setTotalPowerOutputRange] = React.useState<number[]>([0, 0]);
 
     const searched = useMemo(() => {
         var _filtered: any = []
@@ -49,86 +57,114 @@ function Search({ setRowData, productsData }: any) {
         return companyfiltered
     }, [companyfiltered, className])
 
+    const warrantyFiltered = useMemo(() => {
+        if (warranty && warranty !== "0") {
+            const res = classFiltered.filter((item: any) => (item.warranty && item.warranty.toString().toLowerCase().includes(warranty.toLowerCase())));
+            return res;
+        }
+        return classFiltered
+    }, [classFiltered, warranty])
+
     const discountedPriceFiltered = useMemo(() => {
-        const res = classFiltered.filter((item: any) => (item.discountedPrice && item.discountedPrice >= discountedPrice[0] && item.discountedPrice <= discountedPrice[1]));
-        console.log("__________", res);
+        const res = warrantyFiltered.filter((item: any) => (item.discountedPrice && item.discountedPrice >= discountedPrice[0] && item.discountedPrice <= discountedPrice[1]));
         return res;
-    }, [discountedPrice, classFiltered])
+    }, [discountedPrice, warrantyFiltered])
+
+    const weightFiltered = useMemo(() => {
+        const res = discountedPriceFiltered.filter((item: any) => (item.weight && item.weight >= weight[0] && item.weight <= weight[1]));
+        return res;
+    }, [weight, discountedPriceFiltered])
+
+    const heightFiltered = useMemo(() => {
+        const res = weightFiltered.filter((item: any) => (item.height && parseFloat(item.height) >= height[0] && parseFloat(item.height) <= height[1]));
+        return res;
+    }, [height, weightFiltered])
+
+    const ledsFiltered = useMemo(() => {
+        const res = heightFiltered.filter((item: any) => (item.leds && parseFloat(item.leds) >= leds[0] && parseFloat(item.leds) <= leds[1]));
+        return res;
+    }, [leds, heightFiltered])
+
+    const totalPowerOutputFiltered = useMemo(() => {
+        const res = ledsFiltered.filter((item: any) => (item.totalPowerOutput && parseFloat(item.totalPowerOutput) >= totalPowerOutput[0] && parseFloat(item.totalPowerOutput) <= totalPowerOutput[1]));
+        return res;
+    }, [totalPowerOutput, ledsFiltered])
+
 
     useEffect(() => {
-        setRowData(discountedPriceFiltered)
-    }, [discountedPriceFiltered, setRowData])
-
-    const handleDiscountedPriceChange = (event: Event, newValue: number | number[]) => {
-        setDiscountedPrice(newValue as number[]);
-    };
-
-    useEffect(() => {
-        const da = getMaxMinQuote(productsData, 'discountedPrice');
-        console.log('________________', da)
-        setDiscountedPriceRange([da.min, da.max])
-        setDiscountedPrice([da.min, da.max])
-    }, [productsData])
+        setRowData(totalPowerOutputFiltered)
+    }, [totalPowerOutputFiltered, setRowData])
 
     return (
-        <div className='flex justify-start gap-4 items-center'>
-            <div>
-                <p className='font-medium'>Search:</p>
-                <input
-                    type={'text'}
-                    className="border border-blue-500 px-3 py-2 h-10 rounded outline-none"
-                    placeholder='Search'
-                    value={search}
-                    onChange={(e) => { setSearch(e.target.value) }}
-                />
-            </div>
-            <div>
-                <p className='font-medium'>Company:</p>
-                <select
-                    className="border border-blue-500 px-3 py-2 h-10 rounded outline-none"
-                    value={company}
-                    onChange={(e) => { setCompany(e.target.value) }}
-                >
-                    <option value="0">---</option>
-                    {
-                        getUniquelistFromArrayByKey(productsData, "company")?.map((row: any, key: number) => {
-                            return <option key={key}>{row}</option>
-                        })
-                    }
-                </select>
-            </div>
-            <div>
-                <p className='font-medium'>Class:</p>
-                <select
-                    className="border border-blue-500 px-3 py-2 h-10 rounded outline-none"
-                    value={className}
-                    onChange={(e) => { setClassName(e.target.value) }}
-                >
-                    <option value="0">---</option>
-                    {
-                        getUniquelistFromArrayByKey(productsData, "class")?.map((row: any, key: number) => {
-                            return <option key={key}>{row}</option>
-                        })
-                    }
-                </select>
-            </div>
-            <div className="w-48">
-                <p className='font-medium'>Discounted Price:</p>
-                <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
-                    <p>{discountedPriceRange[0]}</p>
-                    <Slider
-                        getAriaLabel={() => 'Temperature range'}
-                        value={discountedPrice}
-                        onChange={handleDiscountedPriceChange}
-                        valueLabelDisplay="auto"
-                        getAriaValueText={valuetext}
-                        min={discountedPriceRange[0]}
-                        max={discountedPriceRange[1]}
+        <>
+            <div className='mt-4 w-[250px] text-sm'>
+                <div className='gap-4'>
+                    <p className='font-medium'>Search:</p>
+                    <input
+                        type={'text'}
+                        className="border border-blue-500 px-3 py-2 h-10 rounded font-medium outline-none w-full"
+                        placeholder='Search'
+                        value={search}
+                        onChange={(e) => { setSearch(e.target.value) }}
                     />
-                    <p>{discountedPriceRange[1]}</p>
-                </Stack>
+                </div>
+
+                <div className='mt-2'>
+                    <SelectOneFilter data={productsData} field={"company"} value={company} setValue={setCompany} label="Company" />
+                    <SelectOneFilter data={productsData} field={"class"} value={className} setValue={setClassName} label="Class" />
+                    <SelectOneFilter data={productsData} field={"warranty"} value={warranty} setValue={setWarranty} label="Warranty" />
+                </div>
+                <div className=''>
+                    <RangeSelector
+                        data={productsData}
+                        field={'discountedPrice'}
+                        label="Discounted Price"
+                        value={discountedPrice}
+                        setValue={setDiscountedPrice}
+                        valueRange={discountedPriceRange}
+                        setValueRange={setDiscountedPriceRange}
+                    />
+                    <RangeSelector
+                        data={productsData}
+                        field={'weight'}
+                        label="Weight (lb)"
+                        value={weight}
+                        setValue={setWeight}
+                        valueRange={weightRange}
+                        setValueRange={setWeightRange}
+                    />
+                    <RangeSelector
+                        data={productsData}
+                        field={'height'}
+                        label="Height (inch)"
+                        value={height}
+                        setValue={setHeight}
+                        valueRange={heightRange}
+                        setValueRange={setHeightRange}
+                    />
+                </div>
+                <div className=''>
+                    <RangeSelector
+                        data={productsData}
+                        field={'leds'}
+                        label="LEDS"
+                        value={leds}
+                        setValue={setLeds}
+                        valueRange={ledsRange}
+                        setValueRange={setLedsRange}
+                    />
+                    <RangeSelector
+                        data={productsData}
+                        field={'totalPowerOutput'}
+                        label="Total Power Output"
+                        value={totalPowerOutput}
+                        setValue={setTotalPowerOutput}
+                        valueRange={totalPowerOutputRange}
+                        setValueRange={setTotalPowerOutputRange}
+                    />
+                </div>
             </div>
-        </div>
+        </>
     );
 }
 

@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .n-container {
-  @apply max-w-[1400px] w-11/12 m-auto;
+  @apply w-11/12 m-auto;
 }
 
 .ag-header-group-cell-label {

@@ -129,13 +129,10 @@ function getMaxMinQuote(_arr: any, key: string) {
   for (let i = 0; i < _arr.length; i++) {
     const row = _arr[i];
     if (parseFloat(row[key])) {
-      console.log(i, max, min, parseFloat(row[key]));
       if (max < parseFloat(row[key])) {
-        console.log(i, "max");
         max = parseFloat(row[key]);
       }
       if (min > parseFloat(row[key])) {
-        console.log(i, "min");
         min = parseFloat(row[key]);
       }
     }
@@ -152,7 +149,8 @@ function getUniquelistFromArrayByKey(arr: any, key: string) {
     .map((item: any) => item[key])
     .filter(
       (value: any, index: any, self: any) => self.indexOf(value) === index
-    );
+    )
+    .sort();
   return unique;
 }
 
