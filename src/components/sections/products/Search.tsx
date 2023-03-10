@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import BoolSelectFilter from './search/BoolSelectFilter';
 import RangeSelector from './search/RangeSelector';
 import SelectOneFilter from './search/SelectOneFilter';
 
@@ -23,6 +24,8 @@ function Search({ setRowData, productsData }: any) {
 
     const [totalPowerOutput, setTotalPowerOutput] = React.useState<number[]>([0, 100]);
     const [totalPowerOutputRange, setTotalPowerOutputRange] = React.useState<number[]>([0, 0]);
+
+    const [isPulsing, setIsPulsing] = useState("0");
 
     const searched = useMemo(() => {
         var _filtered: any = []
@@ -90,10 +93,19 @@ function Search({ setRowData, productsData }: any) {
         return res;
     }, [totalPowerOutput, ledsFiltered])
 
+    const pulsingFiltered = useMemo(() => {
+        if (isPulsing && isPulsing !== "0") {
+            const res = totalPowerOutputFiltered.filter((item: any) => (
+                item.pulsing && isPulsing === "true" ? item.pulsing.toString().toLowerCase().includes("yes") : item.pulsing.toString().toLowerCase().includes("no")
+            ));
+            return res;
+        }
+        return totalPowerOutputFiltered
+    }, [isPulsing, totalPowerOutputFiltered])
 
     useEffect(() => {
-        setRowData(totalPowerOutputFiltered)
-    }, [totalPowerOutputFiltered, setRowData])
+        setRowData(pulsingFiltered)
+    }, [pulsingFiltered, setRowData])
 
     return (
         <>
@@ -113,6 +125,9 @@ function Search({ setRowData, productsData }: any) {
                     <SelectOneFilter data={productsData} field={"company"} value={company} setValue={setCompany} label="Company" />
                     <SelectOneFilter data={productsData} field={"class"} value={className} setValue={setClassName} label="Class" />
                     <SelectOneFilter data={productsData} field={"warranty"} value={warranty} setValue={setWarranty} label="Warranty" />
+                </div>
+                <div>
+                    <BoolSelectFilter label={"Pulsing"} value={isPulsing} setValue={setIsPulsing} />
                 </div>
                 <div className=''>
                     <RangeSelector
